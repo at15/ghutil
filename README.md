@@ -1,6 +1,6 @@
 # ghutil
 
-GitHub util 
+GitHub util
 
 ## Usage
 

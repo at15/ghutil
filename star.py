@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import re
 
@@ -16,14 +18,16 @@ def get_repos(text):
     res = exp.findall(text)
     return [c[0] + '/' + c[1] for c in res]
 
-
-def main():
+@click.command(help='given text contains GitHub urls, fetch their star and order desc')
+@click.argument('file')
+def star(file):
     with open('token', 'r') as f:
         access_token = f.read().rstrip()
     g = Github(access_token)
-    with open('fixture/awesome_go_logging.txt', 'r') as f:
+    with open(file, 'r') as f:
         repo_names = get_repos(f.read())
     repos = []
+    # FIXME: it seems progress bar is not working
     with click.progressbar(length=len(repo_names)) as bar:
         for repo_name in repo_names:
             print(repo_name)
@@ -41,8 +45,10 @@ def main():
             })
             # bar.update(1)
     df = pd.DataFrame(repos)
-    df.to_csv('fixture/awesome_go_logging.csv', index=False)
+    saved_file = file + '.csv'
+    df.to_csv(saved_file, index=False)
+    print('saved to', saved_file)
 
 
 if __name__ == '__main__':
-    main()
+    star()
